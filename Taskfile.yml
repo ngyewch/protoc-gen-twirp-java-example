@@ -1,0 +1,56 @@
+version: '3'
+
+tasks:
+  clean:
+    desc: Clean
+    cmds:
+      - ./gradlew clean
+
+  build:
+    deps: [ generate-source ]
+    desc: Build
+    cmds:
+      - ./gradlew build
+
+  dependencyUpdates:
+    desc: Dependency updates
+    cmds:
+      - ./gradlew dependencyUpdates
+
+  spotlessCheck:
+    desc: Spotless check
+    cmds:
+      - ./gradlew spotlessCheck
+
+  spotlessApply:
+    desc: Spotless apply
+    cmds:
+      - ./gradlew spotlessApply
+
+  buildHealth:
+    cmds:
+      - ./gradlew buildHealth && cat build/reports/dependency-analysis/build-health-report.txt
+
+  docker-build:
+    cmds:
+      - docker build --tag go-protoc-twirp-java:latest https://github.com/ngyewch/protoc-gen-twirp-java.git
+
+  generate-source:
+    deps: [ docker-build ]
+    cmds:
+      - mkdir -p build/generated/source/protoc-gen-twirp-java/main/java
+      - docker run --rm -it
+        --user $(id -u):$(id -g)
+        -v ${PB_DIR}:/protobuf
+        -v ${OUTPUT_DIR}:/build
+        go-protoc-twirp-java:latest
+        protoc --proto_path=/protobuf
+        --twirp-java_out=/build
+        --twirp-java_opt=gen-helidon-client=true
+        --twirp-java_opt=gen-helidon-server=true
+        service.proto
+    env:
+      PB_DIR:
+        sh: echo $(pwd)/src/main/proto
+      OUTPUT_DIR:
+        sh: echo $(pwd)/build/generated/source/protoc-gen-twirp-java/main/java

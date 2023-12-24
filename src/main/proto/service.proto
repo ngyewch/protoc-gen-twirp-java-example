@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package example;
+
+option java_package = "rpc";
+option java_multiple_files = true;
+option java_outer_classname = "Rpc";
+
+option go_package = "github.com/ngyewch/twirp-playground/rpc";
+
+import "model.proto";
+
+service TestService {
+    rpc Add(AddRequest) returns (AddResponse);
+}
+
+service TestService2 {
+    rpc ToUpper(example2.ToUpperRequest) returns (example2.ToUpperResponse);
+}
+
+message AddRequest {
+    float a = 1;
+    float b = 2;
+}
+
+message AddResponse {
+    float value = 1;
+}
