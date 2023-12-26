@@ -34,11 +34,12 @@ tasks:
   docker-build:
     cmds:
       - docker build --tag go-protoc-twirp-java:latest https://github.com/ngyewch/protoc-gen-twirp-java.git
+      #- docker build --tag go-protoc-twirp-java:latest ../protoc-gen-twirp-java
 
   generate-source:
     deps: [ docker-build ]
     cmds:
-      - mkdir -p build/generated/source/protoc-gen-twirp-java/main/java
+      - mkdir -p ${OUTPUT_DIR}
       - docker run --rm -it
         --user $(id -u):$(id -g)
         -v ${PB_DIR}:/protobuf
