@@ -27,6 +27,12 @@ dependencies {
     implementation("io.helidon.media:helidon-media-common")
     implementation("io.helidon.webclient:helidon-webclient")
     implementation("io.helidon.webserver:helidon-webserver")
+
+    testImplementation(platform("org.junit:junit-bom:5.10.1"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
+    testImplementation("org.junit.jupiter:junit-jupiter-api")
+    testImplementation("org.junit.jupiter:junit-jupiter-params")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 repositories {
@@ -43,6 +49,13 @@ application {
     mainClass = "Main"
 }
 
+tasks.named<Test>("test") {
+    useJUnitPlatform()
+
+    testLogging {
+        events("PASSED", "SKIPPED", "FAILED", "STANDARD_OUT", "STANDARD_ERROR")
+    }
+}
 versionsFilter {
     gradleReleaseChannel.set("current")
     checkConstraints.set(true)
