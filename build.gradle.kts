@@ -17,7 +17,7 @@ sourceSets {
 }
 
 dependencies {
-    implementation(platform("io.helidon:helidon-bom:2.6.4"))
+    implementation(platform("io.helidon:helidon-bom:2.6.7"))
 
     implementation("com.google.protobuf:protobuf-java:4.27.2")
     implementation("com.google.protobuf:protobuf-java-util:4.27.2")
