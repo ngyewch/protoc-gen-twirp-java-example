@@ -19,8 +19,8 @@ sourceSets {
 dependencies {
     implementation(platform("io.helidon:helidon-bom:2.6.4"))
 
-    implementation("com.google.protobuf:protobuf-java:3.25.1")
-    implementation("com.google.protobuf:protobuf-java-util:3.25.1")
+    implementation("com.google.protobuf:protobuf-java:4.27.2")
+    implementation("com.google.protobuf:protobuf-java-util:4.27.2")
     implementation("info.picocli:picocli:4.7.6")
     implementation("io.helidon.common:helidon-common-http")
     implementation("io.helidon.common:helidon-common-reactive")
@@ -41,7 +41,7 @@ repositories {
 
 protobuf {
     protoc {
-        artifact = "com.google.protobuf:protoc:3.25.1"
+        artifact = "com.google.protobuf:protoc:4.27.2"
     }
 }
 
