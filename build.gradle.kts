@@ -1,3 +1,5 @@
+import com.google.protobuf.gradle.id
+
 plugins {
     application
     java
@@ -8,19 +10,12 @@ plugins {
     id("se.ascp.gradle.gradle-versions-filter") version "0.1.16"
 }
 
-sourceSets {
-    main {
-        java {
-            srcDir("build/generated/source/protoc-gen-twirp-java/main/java")
-        }
-    }
-}
-
 dependencies {
+    implementation(platform("com.google.protobuf:protobuf-bom:4.27.2"))
     implementation(platform("io.helidon:helidon-bom:2.6.7"))
 
-    implementation("com.google.protobuf:protobuf-java:4.27.2")
-    implementation("com.google.protobuf:protobuf-java-util:4.27.2")
+    implementation("com.google.protobuf:protobuf-java")
+    implementation("com.google.protobuf:protobuf-java-util")
     implementation("info.picocli:picocli:4.7.6")
     implementation("io.helidon.common:helidon-common-http")
     implementation("io.helidon.common:helidon-common-reactive")
@@ -40,8 +35,23 @@ repositories {
 }
 
 protobuf {
+    plugins {
+        id("twirp-java") {
+            //path = System.getProperty("user.home") + "/.local/share/mise/installs/go-github-com-ngyewch-protoc-gen-twirp-java/0.1.1/bin/protoc-gen-twirp-java"
+        }
+    }
     protoc {
         artifact = "com.google.protobuf:protoc:4.27.2"
+    }
+    generateProtoTasks {
+        ofSourceSet("main").forEach {
+            it.plugins {
+                id("twirp-java") {
+                    option("gen-helidon-client=true")
+                    option("gen-helidon-server=true")
+                }
+            }
+        }
     }
 }
 
@@ -49,13 +59,16 @@ application {
     mainClass = "Main"
 }
 
-tasks.named<Test>("test") {
-    useJUnitPlatform()
+tasks {
+    named<Test>("test") {
+        useJUnitPlatform()
 
-    testLogging {
-        events("PASSED", "SKIPPED", "FAILED", "STANDARD_OUT", "STANDARD_ERROR")
+        testLogging {
+            events("PASSED", "SKIPPED", "FAILED", "STANDARD_OUT", "STANDARD_ERROR")
+        }
     }
 }
+
 versionsFilter {
     gradleReleaseChannel.set("current")
     checkConstraints.set(true)
