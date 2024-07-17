@@ -37,7 +37,7 @@ repositories {
 protobuf {
     plugins {
         id("twirp-java") {
-            //path = System.getProperty("user.home") + "/.local/share/mise/installs/go-github-com-ngyewch-protoc-gen-twirp-java/0.1.1/bin/protoc-gen-twirp-java"
+            artifact = "io.github.ngyewch:protoc-gen-twirp-java:0.1.1"
         }
     }
     protoc {
