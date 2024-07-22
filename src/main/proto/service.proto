@@ -12,6 +12,7 @@ import "model.proto";
 
 service TestService {
     rpc Add(AddRequest) returns (AddResponse);
+    rpc DoSomething(DoSomethingRequest) returns (DoSomethingResponse);
 }
 
 service TestService2 {
@@ -25,4 +26,12 @@ message AddRequest {
 
 message AddResponse {
     float value = 1;
+}
+
+message DoSomethingRequest {
+    bool throwException = 1;
+    string exceptionMessage = 2;
+}
+
+message DoSomethingResponse {
 }

@@ -1,3 +1,4 @@
+import io.helidon.webclient.WebClientException;
 import io.helidon.webserver.Routing;
 import io.helidon.webserver.WebServer;
 import java.util.concurrent.TimeUnit;
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import rpc.AddRequest;
+import rpc.DoSomethingRequest;
 import rpc.RpcTwirp;
 import server.TestService;
 
@@ -52,5 +54,24 @@ public class TestServiceTests {
   public void testAdd(RpcTwirp.TestService service) {
     Assertions.assertEquals(
         14f, service.add(AddRequest.newBuilder().setA(9f).setB(5f).build()).getValue());
+  }
+
+  @ParameterizedTest
+  @MethodSource("serviceProvider")
+  public void testDoSomething(RpcTwirp.TestService service) {
+    try {
+      service.doSomething(
+          DoSomethingRequest.newBuilder()
+              .setThrowException(true)
+              .setExceptionMessage("Hello, world!")
+              .build());
+      Assertions.fail("exception expected");
+    } catch (RuntimeException e) {
+      Assertions.assertNotNull(e.getCause());
+      Throwable t = e.getCause();
+      Assertions.assertEquals(WebClientException.class, t.getClass());
+    } catch (Exception e) {
+      Assertions.fail("RuntimeException expected");
+    }
   }
 }
