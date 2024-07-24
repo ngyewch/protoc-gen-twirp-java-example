@@ -1,4 +1,4 @@
-import io.helidon.webclient.WebClientException;
+import io.github.ngyewch.twirp.TwirpException;
 import io.helidon.webserver.Routing;
 import io.helidon.webserver.WebServer;
 import java.util.concurrent.TimeUnit;
@@ -59,19 +59,13 @@ public class TestServiceTests {
   @ParameterizedTest
   @MethodSource("serviceProvider")
   public void testDoSomething(RpcTwirp.TestService service) {
-    try {
-      service.doSomething(
-          DoSomethingRequest.newBuilder()
-              .setThrowException(true)
-              .setExceptionMessage("Hello, world!")
-              .build());
-      Assertions.fail("exception expected");
-    } catch (RuntimeException e) {
-      Assertions.assertNotNull(e.getCause());
-      Throwable t = e.getCause();
-      Assertions.assertEquals(WebClientException.class, t.getClass());
-    } catch (Exception e) {
-      Assertions.fail("RuntimeException expected");
-    }
+    Assertions.assertThrows(
+        TwirpException.class,
+        () ->
+            service.doSomething(
+                DoSomethingRequest.newBuilder()
+                    .setThrowException(true)
+                    .setExceptionMessage("Hello, world!")
+                    .build()));
   }
 }
