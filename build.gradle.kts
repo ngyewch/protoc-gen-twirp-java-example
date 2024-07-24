@@ -10,34 +10,35 @@ plugins {
     id("se.ascp.gradle.gradle-versions-filter") version "0.1.16"
 }
 
+repositories {
+    mavenCentral()
+}
+
 dependencies {
-    implementation(platform("com.google.protobuf:protobuf-bom:4.27.2"))
-    implementation(platform("io.helidon:helidon-bom:2.6.7"))
+    implementation(platform("io.github.ngyewch.twirp:twirp-bom:0.2.0"))
+
+    implementation("io.github.ngyewch.twirp:twirp-helidon-common")
+    implementation("io.github.ngyewch.twirp:twirp-helidon-client")
+    implementation("io.github.ngyewch.twirp:twirp-helidon-server")
 
     implementation("com.google.protobuf:protobuf-java")
-    implementation("com.google.protobuf:protobuf-java-util")
     implementation("info.picocli:picocli:4.7.6")
     implementation("io.helidon.common:helidon-common-http")
     implementation("io.helidon.common:helidon-common-reactive")
-    implementation("io.helidon.media:helidon-media-common")
-    implementation("io.helidon.webclient:helidon-webclient")
     implementation("io.helidon.webserver:helidon-webserver")
 
     testImplementation(platform("org.junit:junit-bom:5.10.3"))
+    testImplementation("io.github.ngyewch.twirp:twirp-common")
     testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation("org.junit.jupiter:junit-jupiter-api")
     testImplementation("org.junit.jupiter:junit-jupiter-params")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
-repositories {
-    mavenCentral()
-}
-
 protobuf {
     plugins {
         id("twirp-java") {
-            artifact = "io.github.ngyewch:protoc-gen-twirp-java:0.1.1"
+            artifact = "io.github.ngyewch.twirp:protoc-gen-twirp-java:0.2.0"
         }
     }
     protoc {
@@ -77,7 +78,7 @@ versionsFilter {
 
 spotless {
     java {
-        googleJavaFormat("1.18.1").reflowLongStrings().skipJavadocFormatting()
+        googleJavaFormat("1.22.0").reflowLongStrings().skipJavadocFormatting()
         formatAnnotations()
         targetExclude("build/**")
     }
