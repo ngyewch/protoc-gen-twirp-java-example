@@ -3,7 +3,7 @@ import com.google.protobuf.gradle.id
 plugins {
     application
     java
-    id("com.autonomousapps.dependency-analysis") version "1.32.0"
+    id("com.autonomousapps.dependency-analysis") version "2.1.1"
     id("com.diffplug.spotless") version "6.25.0"
     id("com.github.ben-manes.versions") version "0.51.0"
     id("com.google.protobuf") version "0.9.4"
@@ -27,7 +27,7 @@ dependencies {
     implementation("io.helidon.common:helidon-common-reactive")
     implementation("io.helidon.webserver:helidon-webserver")
 
-    testImplementation(platform("org.junit:junit-bom:5.10.3"))
+    testImplementation(platform("org.junit:junit-bom:5.11.1"))
     testImplementation("io.github.ngyewch.twirp:twirp-common")
     testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation("org.junit.jupiter:junit-jupiter-api")
