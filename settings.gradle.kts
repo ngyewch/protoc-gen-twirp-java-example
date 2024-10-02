@@ -10,4 +10,10 @@ if (devMode) {
             mavenCentral()
         }
     }
+} else {
+    dependencyResolutionManagement {
+        repositories {
+            mavenCentral()
+        }
+    }
 }

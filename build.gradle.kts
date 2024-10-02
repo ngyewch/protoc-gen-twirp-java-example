@@ -10,13 +10,11 @@ plugins {
     id("se.ascp.gradle.gradle-versions-filter") version "0.1.16"
 }
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
-    implementation(platform("io.github.ngyewch.twirp:twirp-bom:0.2.0"))
+    implementation(platform("io.github.ngyewch.twirp:twirp-bom:0.3.0"))
 
+    implementation("io.github.ngyewch.twirp:twirp-common")
+    implementation("io.github.ngyewch.twirp:twirp-apache-client")
     implementation("io.github.ngyewch.twirp:twirp-helidon-common")
     implementation("io.github.ngyewch.twirp:twirp-helidon-client")
     implementation("io.github.ngyewch.twirp:twirp-helidon-server")
@@ -28,8 +26,7 @@ dependencies {
     implementation("io.helidon.webserver:helidon-webserver")
 
     testImplementation(platform("org.junit:junit-bom:5.11.1"))
-    testImplementation("io.github.ngyewch.twirp:twirp-common")
-    testImplementation("org.junit.jupiter:junit-jupiter")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter")
     testImplementation("org.junit.jupiter:junit-jupiter-api")
     testImplementation("org.junit.jupiter:junit-jupiter-params")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
@@ -38,11 +35,11 @@ dependencies {
 protobuf {
     plugins {
         id("twirp-java") {
-            artifact = "io.github.ngyewch.twirp:protoc-gen-twirp-java:0.2.0"
+            artifact = "io.github.ngyewch.twirp:protoc-gen-twirp-java:0.3.0"
         }
     }
     protoc {
-        artifact = "com.google.protobuf:protoc:4.27.2"
+        artifact = "com.google.protobuf:protoc:4.28.2"
     }
     generateProtoTasks {
         ofSourceSet("main").forEach {
@@ -50,6 +47,7 @@ protobuf {
                 id("twirp-java") {
                     option("gen-helidon-client=true")
                     option("gen-helidon-server=true")
+                    option("gen-apache-client=true")
                 }
             }
         }
@@ -78,7 +76,7 @@ versionsFilter {
 
 spotless {
     java {
-        googleJavaFormat("1.22.0").reflowLongStrings().skipJavadocFormatting()
+        googleJavaFormat("1.23.0").reflowLongStrings().skipJavadocFormatting()
         formatAnnotations()
         targetExclude("build/**")
     }

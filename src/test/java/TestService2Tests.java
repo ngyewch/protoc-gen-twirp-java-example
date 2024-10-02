@@ -12,11 +12,14 @@ import server.TestService2;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class TestService2Tests {
   private WebServer webServer;
-  private RpcTwirp.TestService2 protobufService;
-  private RpcTwirp.TestService2 jsonService;
+  private RpcTwirp.TestService2 helidonProtobufService;
+  private RpcTwirp.TestService2 helidonJsonService;
+  private RpcTwirp.TestService2 apacheProtobufService;
+  private RpcTwirp.TestService2 apacheJsonService;
 
   public Stream<RpcTwirp.TestService2> serviceProvider() {
-    return Stream.of(protobufService, jsonService);
+    return Stream.of(
+        helidonProtobufService, helidonJsonService, apacheProtobufService, apacheJsonService);
   }
 
   @BeforeAll
@@ -33,9 +36,12 @@ public class TestService2Tests {
                     .build())
             .build();
     webServer.start().await(15, TimeUnit.SECONDS);
+    System.out.println(System.getProperty("user.dir"));
     final String baseUri = String.format("http://127.0.0.1:%d/twirp", webServer.port());
-    protobufService = RpcTwirp.Helidon.Client.TestService2.newProtobufClient(baseUri);
-    jsonService = RpcTwirp.Helidon.Client.TestService2.newJSONClient(baseUri);
+    helidonProtobufService = RpcTwirp.Helidon.Client.TestService2.newProtobufClient(baseUri);
+    helidonJsonService = RpcTwirp.Helidon.Client.TestService2.newJSONClient(baseUri);
+    apacheProtobufService = RpcTwirp.Apache.Client.TestService2.newProtobufClient(baseUri);
+    apacheJsonService = RpcTwirp.Apache.Client.TestService2.newJSONClient(baseUri);
   }
 
   @AfterAll
@@ -43,7 +49,7 @@ public class TestService2Tests {
     webServer.shutdown().await(15, TimeUnit.SECONDS);
   }
 
-  @ParameterizedTest
+  @ParameterizedTest(name = "[{index}] testAdd()")
   @MethodSource("serviceProvider")
   public void testAdd(RpcTwirp.TestService2 service) {
     Assertions.assertEquals(

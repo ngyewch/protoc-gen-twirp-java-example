@@ -18,11 +18,14 @@ import server.TestService;
 public class TestServiceTests {
 
   private WebServer webServer;
-  private RpcTwirp.TestService protobufService;
-  private RpcTwirp.TestService jsonService;
+  private RpcTwirp.TestService helidonProtobufService;
+  private RpcTwirp.TestService helidonJsonService;
+  private RpcTwirp.TestService apacheProtobufService;
+  private RpcTwirp.TestService apacheJsonService;
 
   public Stream<RpcTwirp.TestService> serviceProvider() {
-    return Stream.of(protobufService, jsonService);
+    return Stream.of(
+        helidonProtobufService, helidonJsonService, apacheProtobufService, apacheJsonService);
   }
 
   @BeforeAll
@@ -40,8 +43,10 @@ public class TestServiceTests {
             .build();
     webServer.start().await(15, TimeUnit.SECONDS);
     final String baseUri = String.format("http://127.0.0.1:%d/twirp", webServer.port());
-    protobufService = RpcTwirp.Helidon.Client.TestService.newProtobufClient(baseUri);
-    jsonService = RpcTwirp.Helidon.Client.TestService.newJSONClient(baseUri);
+    helidonProtobufService = RpcTwirp.Helidon.Client.TestService.newProtobufClient(baseUri);
+    helidonJsonService = RpcTwirp.Helidon.Client.TestService.newJSONClient(baseUri);
+    apacheProtobufService = RpcTwirp.Apache.Client.TestService.newProtobufClient(baseUri);
+    apacheJsonService = RpcTwirp.Apache.Client.TestService.newJSONClient(baseUri);
   }
 
   @AfterAll
@@ -49,14 +54,14 @@ public class TestServiceTests {
     webServer.shutdown().await(15, TimeUnit.SECONDS);
   }
 
-  @ParameterizedTest
+  @ParameterizedTest(name = "[{index}] testAdd()")
   @MethodSource("serviceProvider")
   public void testAdd(RpcTwirp.TestService service) {
     Assertions.assertEquals(
         14f, service.add(AddRequest.newBuilder().setA(9f).setB(5f).build()).getValue());
   }
 
-  @ParameterizedTest
+  @ParameterizedTest(name = "[{index}] testDoSomething()")
   @MethodSource("serviceProvider")
   public void testDoSomething(RpcTwirp.TestService service) {
     Assertions.assertThrows(
