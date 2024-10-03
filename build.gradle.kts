@@ -11,11 +11,10 @@ plugins {
 }
 
 dependencies {
-    implementation(platform("io.github.ngyewch.twirp:twirp-bom:0.3.0"))
+    implementation(platform("io.github.ngyewch.twirp:twirp-bom:0.4.0"))
 
     implementation("io.github.ngyewch.twirp:twirp-common")
     implementation("io.github.ngyewch.twirp:twirp-apache-client")
-    implementation("io.github.ngyewch.twirp:twirp-helidon-common")
     implementation("io.github.ngyewch.twirp:twirp-helidon-client")
     implementation("io.github.ngyewch.twirp:twirp-helidon-server")
 
@@ -38,7 +37,7 @@ dependencies {
 protobuf {
     plugins {
         id("twirp-java") {
-            artifact = "io.github.ngyewch.twirp:protoc-gen-twirp-java:0.3.0"
+            artifact = "io.github.ngyewch.twirp:protoc-gen-twirp-java:0.4.0"
         }
     }
     protoc {
