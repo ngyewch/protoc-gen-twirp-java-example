@@ -1,6 +1,9 @@
 import io.github.ngyewch.twirp.TwirpException;
 import io.helidon.webserver.Routing;
 import io.helidon.webserver.WebServer;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.AfterAll;
@@ -16,16 +19,12 @@ import server.TestService;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class TestServiceTests {
-
   private WebServer webServer;
-  private RpcTwirp.TestService helidonProtobufService;
-  private RpcTwirp.TestService helidonJsonService;
-  private RpcTwirp.TestService apacheProtobufService;
-  private RpcTwirp.TestService apacheJsonService;
+  private Process goServerProcess;
+  private List<RpcTwirp.TestService> serviceList;
 
   public Stream<RpcTwirp.TestService> serviceProvider() {
-    return Stream.of(
-        helidonProtobufService, helidonJsonService, apacheProtobufService, apacheJsonService);
+    return serviceList.stream();
   }
 
   @BeforeAll
@@ -42,16 +41,27 @@ public class TestServiceTests {
                     .build())
             .build();
     webServer.start().await(15, TimeUnit.SECONDS);
-    final String baseUri = String.format("http://127.0.0.1:%d/twirp", webServer.port());
-    helidonProtobufService = RpcTwirp.Helidon.Client.TestService.newProtobufClient(baseUri);
-    helidonJsonService = RpcTwirp.Helidon.Client.TestService.newJSONClient(baseUri);
-    apacheProtobufService = RpcTwirp.Apache.Client.TestService.newProtobufClient(baseUri);
-    apacheJsonService = RpcTwirp.Apache.Client.TestService.newJSONClient(baseUri);
+
+    goServerProcess = ReferenceImplementation.runGoServer();
+
+    final List<String> baseUris =
+        Arrays.asList(
+            String.format("http://127.0.0.1:%d/twirp", webServer.port()),
+            "http://127.0.0.1:18080/twirp");
+
+    serviceList = new ArrayList<>();
+    for (final String baseUri : baseUris) {
+      serviceList.add(RpcTwirp.Helidon.Client.TestService.newProtobufClient(baseUri));
+      serviceList.add(RpcTwirp.Helidon.Client.TestService.newJSONClient(baseUri));
+      serviceList.add(RpcTwirp.Apache.Client.TestService.newProtobufClient(baseUri));
+      serviceList.add(RpcTwirp.Apache.Client.TestService.newJSONClient(baseUri));
+    }
   }
 
   @AfterAll
   public void afterAll() {
     webServer.shutdown().await(15, TimeUnit.SECONDS);
+    goServerProcess.destroyForcibly();
   }
 
   @ParameterizedTest(name = "[{index}] testAdd()")

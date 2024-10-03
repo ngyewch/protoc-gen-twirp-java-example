@@ -25,7 +25,10 @@ dependencies {
     implementation("io.helidon.common:helidon-common-reactive")
     implementation("io.helidon.webserver:helidon-webserver")
 
+    testImplementation(platform("com.fasterxml.jackson:jackson-bom:2.18.0"))
     testImplementation(platform("org.junit:junit-bom:5.11.1"))
+    testImplementation("com.fasterxml.jackson.core:jackson-annotations")
+    testImplementation("com.fasterxml.jackson.core:jackson-databind")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter")
     testImplementation("org.junit.jupiter:junit-jupiter-api")
     testImplementation("org.junit.jupiter:junit-jupiter-params")
